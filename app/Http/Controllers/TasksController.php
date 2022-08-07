@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tasks;
 use Illuminate\Http\Request;
 
 class TasksController extends Controller
@@ -13,7 +14,20 @@ class TasksController extends Controller
      */
     public function index()
     {
-        return 'Showing all tasks';
+        $tasks = Tasks::query()->get();
+        $task_data = array();
+        foreach ($tasks as $item){
+            $task = Tasks::query()
+                ->where('id', $item['id'])
+                ->first();
+            $task_array = array(
+                'data' => $item,
+                'status' => $task->status,
+                'labels' => $task->label
+            );
+            $task_data[] = $task_array;
+        }
+        return $task_data;
     }
 
     /**
@@ -45,7 +59,15 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        return 'showing task id - ' . $id;
+        $task = Tasks::query()
+            ->where('id', $id)
+            ->first();
+        foreach ($task->status as $status){
+            var_dump($status->name);
+        }
+        $labels = $task->label;
+
+
     }
 
     /**
